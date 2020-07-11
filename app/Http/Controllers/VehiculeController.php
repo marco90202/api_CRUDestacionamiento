@@ -13,7 +13,7 @@ class VehiculeController extends ApiController
     public function index()
     {
       // code...
-      $vehicules = Vehicule::all();
+      $vehicules = Vehicule::where('state','active')->get();
 
       return $this->sendResponse($vehicules,'Vehiculos activos.');
 
@@ -39,7 +39,8 @@ class VehiculeController extends ApiController
       //dd($request->all());
         $validator = Validator::make($request->all(), [
             'brand' => 'required|string',
-            'plate' => 'required|string'
+            'plate' => 'required|unique:vehicules,plate',
+            'client_id' => 'required|integer'
         ]);
 
         if($validator->fails()) return $this->sendError($validator->errors(),'Error en la validacion',422);
@@ -47,7 +48,7 @@ class VehiculeController extends ApiController
         $vehicule = new Vehicule();
         $vehicule->brand = $request->brand;
         $vehicule->plate = $request->plate;
-        $vehicule->client_id = 1;
+        $vehicule->client_id = $request->client_id;
         $vehicule->save();
 
         return $this->sendResponse($vehicule, 'Vehiculo asignado existosamente.');
@@ -65,13 +66,21 @@ class VehiculeController extends ApiController
       $vehiculeFinded = Vehicule::find($vehicule);
       if($vehiculeFinded == null) return $this->sendError('No existe el vehiculo igresado.');
 
-      $validator = Validator::make($request->all(), [
-          'brand' => 'nullable|string',
-          'plate' => 'nullable|string'
-      ]);
-      if($validator->fails()) return $this->sendError($validator->errors(),'Error en la validacion',422);
+      if($vehiculeFinded->plate == $request->plate){
+        $validator = Validator::make($request->all(), [
+          'brand' => 'nullable|string'
 
-      $data = $request->input();
+        ]);
+        if($validator->fails()) return $this->sendError($validator->errors(),'Error en la validacion',422);
+          $data = $request->input();
+      }else{
+        $validator = Validator::make($request->all(), [
+          'brand' => 'nullable|string',
+          'plate' => 'nullable|unique:vehicules,plate'
+        ]);
+        if($validator->fails()) return $this->sendError($validator->errors(),'Error en la validacion',422);
+        $data = $request->input();
+      }
 
       if(sizeof($data) > 0){
         $vehiculeFinded->fill($data)->save();
@@ -95,7 +104,7 @@ class VehiculeController extends ApiController
       // code...
       if(!is_numeric($vehicule)) return $this->sendError('Parametro no valido.');
       $vehiculeFinded = Vehicule::find($vehicule);
-      if($vehiculeFinded == null) return $this->sendError('No existe el cliente igresado.');
+      if($vehiculeFinded == null) return $this->sendError('No existe el vehiculo igresado.');
 
       $vehiculeFinded->state = 'deleted';
       $vehiculeFinded->save();

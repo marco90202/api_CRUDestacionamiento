@@ -10,8 +10,8 @@ class Parking extends Model
     //
     use softDeletes;
 
-    protected $hidden = [
-      'id'
+    protected $fillable = [
+      'place','level','status','vehicule_id'
     ];
 
     public function vehicules()

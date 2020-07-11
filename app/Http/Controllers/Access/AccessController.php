@@ -43,7 +43,7 @@ class AccessController extends AccessTokenController
 
 
                 $tokenInfo = collect($tokenInfo);
-                $tokenInfo->put('clients', $user);
+                $tokenInfo->put('user', $user);
                 // Pendiente puttear navegaciones, roles
                 $success = true;
                 $state = 200;
@@ -109,7 +109,7 @@ class AccessController extends AccessTokenController
 
          $data = [
                      //'token' => $token,
-                     'user' => $user
+                      $user
                  ];
          return $this->sendResponse($data,'Registro satisfactorio.');
      }

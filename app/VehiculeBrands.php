@@ -10,6 +10,6 @@ class VehiculeBrands extends Model
 {
     //
     use softDeletes;
-    
+
 
 }

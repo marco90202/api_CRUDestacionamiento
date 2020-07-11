@@ -13,9 +13,7 @@ class Vehicule extends Model
       'brand','plate','client_id'
     ];
 
-    protected $hidden = [
-      'id'
-    ];
+    
 
     public function client()
     {
