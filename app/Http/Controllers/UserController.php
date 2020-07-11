@@ -14,7 +14,7 @@ class UserController extends ApiController
       // code...
       $clients = User::where('state','active')->get();
 
-      return $this->sendResponse($clients,'Useres activos');
+      return $this->sendResponse($clients,'Usuarios activos');
     }
 
 
@@ -24,9 +24,9 @@ class UserController extends ApiController
       if(!is_numeric($client)) return $this->sendError('Parametro debe ser numerico.');
 
       $clientFinded = User::find($client);
-      if($clientFinded == null) return $this->sendError('No existe el cliente igresado.');
+      if($clientFinded == null) return $this->sendError('No existe el usuario igresado.');
 
-      return $this->sendResponse($clientFinded, 'Informacion del usuarios.');
+      return $this->sendResponse($clientFinded, 'Informacion del usuario.');
     }
 
 
@@ -37,7 +37,7 @@ class UserController extends ApiController
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'email' => 'required|email|unique:clients,email|string',
+            'email' => 'required|email|unique:users,email|string',
             'password' => 'required|string|min:6',
             'confirm_password' => 'required|same:password'
         ]);
@@ -51,7 +51,7 @@ class UserController extends ApiController
         $client->password = $request->password;
         $client->save();
 
-        return $this->sendResponse($client, 'Usere creado existosamente.');
+        return $this->sendResponse($client, 'Usuario creado existosamente.');
 
     }
 
@@ -69,7 +69,7 @@ class UserController extends ApiController
       $validator = Validator::make($request->all(), [
           'firstname' => 'nullable|string',
           'lastname' => 'nullable|string',
-          'email' => 'nullable|email|unique:clients,email|string'
+          'email' => 'nullable|email|unique:users,email|string'
       ]);
       if($validator->fails()) return $this->sendError($validator->errors(),'Error en la validacion',422);
 
@@ -77,10 +77,10 @@ class UserController extends ApiController
 
       if(sizeof($data) > 0){
         $clientFinded->fill($data)->save();
-        $msg = 'Se actualizó la información del cliente: '.$clientFinded->lastname.', '.$clientFinded->firstname;
+        $msg = 'Se actualizó la información del usuario: '.$clientFinded->lastname.', '.$clientFinded->firstname;
 
       }else{
-        $msg = 'No se pudo actualizar la información del cliente: '.$clientFinded->lastname.', '.$clientFinded->firstname;
+        $msg = 'No se pudo actualizar la información del usuario: '.$clientFinded->lastname.', '.$clientFinded->firstname;
       }
 
       return $this->sendResponse($clientFinded,$msg);
@@ -97,12 +97,12 @@ class UserController extends ApiController
       // code...
       if(!is_numeric($client)) return $this->sendError('Parametro no valido.');
       $clientFinded = User::find($client);
-      if($clientFinded == null) return $this->sendError('No existe el cliente igresado.');
+      if($clientFinded == null) return $this->sendError('No existe el usuario igresado.');
 
       $clientFinded->state = 'deleted';
       $clientFinded->save();
       $clientFinded->delete();
-      return $this->sendResponse($clientFinded,'Usere eliminado existosamente.');
+      return $this->sendResponse($clientFinded,'usuario eliminado existosamente.');
     }
 
 
@@ -112,11 +112,11 @@ class UserController extends ApiController
       // code...
       if(!is_numeric($client)) return $this->sendError('Parametro no valido.');
       $clientFinded = User::withTrashed()->find($client);
-      if($clientFinded->state == 'active') return $this->sendError('El cliente se encuentra activo.');
+      if($clientFinded->state == 'active') return $this->sendError('El usuario se encuentra activo.');
       $clientFinded->state = 'active';
       $clientFinded->save();
       $clientFinded->restore();
-      return $this->sendResponse($clientFinded,'Usere recuperado existosamente.');
+      return $this->sendResponse($clientFinded,'Usuario recuperado existosamente.');
 
 
     }
