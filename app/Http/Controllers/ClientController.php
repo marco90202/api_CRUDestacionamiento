@@ -38,8 +38,7 @@ class ClientController extends ApiController
             'firstname' => 'required|string',
             'lastname' => 'required|string',
             'email' => 'required|email|unique:clients,email|string',
-            'password' => 'required|string|min:6',
-            'confirm_password' => 'required|same:password'
+            'password' => 'required|string|min:6'
         ]);
 
         if($validator->fails()) return $this->sendError($validator->errors(),'Error en la validacion',422);

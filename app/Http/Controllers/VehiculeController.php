@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Vehicule;
+use App\Client;
 use Validator;
 
 
@@ -40,15 +41,17 @@ class VehiculeController extends ApiController
         $validator = Validator::make($request->all(), [
             'brand' => 'required|string',
             'plate' => 'required|unique:vehicules,plate',
-            'client_id' => 'required|integer'
+            'client_id' => 'required|string'
         ]);
 
         if($validator->fails()) return $this->sendError($validator->errors(),'Error en la validacion',422);
 
+        $clientID = Client::where('email',$request->client_id)->first();
+
         $vehicule = new Vehicule();
         $vehicule->brand = $request->brand;
         $vehicule->plate = $request->plate;
-        $vehicule->client_id = $request->client_id;
+        $vehicule->client_id = $clientID->id;
         $vehicule->save();
 
         return $this->sendResponse($vehicule, 'Vehiculo asignado existosamente.');
