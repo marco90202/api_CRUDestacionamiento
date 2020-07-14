@@ -13,7 +13,6 @@ class UserController extends ApiController
     {
       // code...
       $clients = User::where('state','active')->get();
-
       return $this->sendResponse($clients,'Usuarios activos');
     }
 

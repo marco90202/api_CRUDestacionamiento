@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Vehicule;
 use App\Client;
 use Validator;
+use DB;
 
 
 class VehiculeController extends ApiController
@@ -14,9 +15,19 @@ class VehiculeController extends ApiController
     public function index()
     {
       // code...
-      $vehicules = Vehicule::where('state','active')->get();
+      // $vehicules = Vehicule::where('state','active')->get();
+      $vehicules = DB::table('vehicules as v')
+                      ->join('clients as c','c.id','=','v.client_id')
+                      ->where('v.state','active')
+                      ->select('v.*','c.email')
+                      ->get();
+      $clients = Client::where('state','active')->get();
+      $groupResponse = [
+        'vehicules' => $vehicules,
+        'clients' => $clients
+      ];
 
-      return $this->sendResponse($vehicules,'Vehiculos activos.');
+      return $this->sendResponse($groupResponse,'Vehiculos activos.');
 
     }
 
