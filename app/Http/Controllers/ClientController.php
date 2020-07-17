@@ -120,4 +120,11 @@ class ClientController extends ApiController
 
     }
 
+
+    public function report()
+    {
+        // code...
+        $report = DB::select('')->get();
+    }
+
 }
